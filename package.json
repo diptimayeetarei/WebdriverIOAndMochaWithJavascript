@@ -20,6 +20,7 @@
     "chromedriver": "^107.0.3",
     "wdio-chromedriver-service": "^8.0.0",
     "wdio-reportportal-reporter": "^7.0.0",
-    "wdio-reportportal-service": "^7.0.0"
+    "wdio-reportportal-service": "^7.0.0",
+    "wdio-slack-service": "^2.0.9"
   }
 }

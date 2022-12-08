@@ -15,4 +15,16 @@ describe('My Login application', () => {
     it('should verify the page after login', async () => {
         await loginPage.elementDisplay()
     });
+    it('should verify the page after login', async () => {
+        // await loginPage.elementDisplay()
+        console.log("passed");
+    });
+    it('should verify the page after login', async () => {
+        console.log("passed");
+        // await loginPage.elementDisplay()
+    });
+    it('should verify the page after login', async () => {
+        console.log("passed");
+        // await loginPage.elementDisplay()
+    });
 });

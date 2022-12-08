@@ -2,6 +2,9 @@ const reportportal = require('wdio-reportportal-reporter');
 const RpService = require("wdio-reportportal-service");
 const path = require('path');
 const fs = require('fs');
+const slack = require('wdio-slack-service');
+const { failedAttachment, passedAttachment } = require('./slack.config');
+
 const conf = {
   reportPortalClientConfig: { // report portal settings
     token: '5129f576-5192-458f-97dc-068854b53b41',
@@ -153,7 +156,14 @@ exports.config = {
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
   // services: ['chromedriver'],
-  services: [[RpService, {}]],
+  services: [[RpService, {}],
+  [slack, {
+    webHookUrl: "https://hooks.slack.com/services/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", // Used to post notification to a particular channel
+    notifyOnlyOnFailure: true, // Send notification only on test failure
+    messageTitle: "notification" // Name of the notification
+}]],
+
+
 
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
@@ -243,8 +253,14 @@ exports.config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {Object}         browser      instance of created browser/device session
    */
-  // before: function (capabilities, specs) {
-  // },
+  before: function (capabilities, specs) {
+    global.failedTests = 0;
+    global.passedTests = 0;
+    global.tests = 0;
+    global.testNameFull = '';
+    global.attachment = [{}];
+    browser.testTitle;
+  },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {String} commandName hook command name
@@ -295,7 +311,15 @@ exports.config = {
       const outputFile = path.join(__dirname, filename);
       await browser.saveScreenshot(outputFile);
       await reportportal.sendFileToTest(test, 'info', filename, fs.readFileSync(outputFile));
+      passedTests++;
+      let attach = passedAttachment(test);
+      attachment.push(attach);
     }
+    if (!passed) {
+      let attach = failedAttachment(test, error);
+      failedTests++;
+      attachment.push(attach);
+  }
   }
   /**
    * Hook that gets executed after the suite has ended
@@ -346,4 +370,5 @@ exports.config = {
   */
   // onReload: function(oldSessionId, newSessionId) {
   // }
+  
 }
